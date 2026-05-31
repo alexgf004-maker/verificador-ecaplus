@@ -842,9 +842,10 @@ function normalizeVal(v) {
 }
 
 function checkMatch(encontrado, esperado) {
-  // Special: for frecuencia, just check the number
-  const e1 = normalizeVal(encontrado).replace(/\s*hz/i, '');
-  const e2 = normalizeVal(esperado).replace(/\s*hz/i, '');
+  let e1 = normalizeVal(encontrado).replace(/\s*hz/i, '');
+  let e2 = normalizeVal(esperado).replace(/\s*hz/i, '');
+  e1 = e1.replace(/(\d+)\.0+(?!\d)/g, '$1');
+  e2 = e2.replace(/(\d+)\.0+(?!\d)/g, '$1');
   return e1 === e2;
 }
 
