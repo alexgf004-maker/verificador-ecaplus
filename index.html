@@ -758,7 +758,7 @@ Extrae los valores de la pantalla EcaPlus en la imagen y responde solo con el JS
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
+        max_tokens: 2000,
         system: systemPrompt,
         messages: [{
           role: 'user',
@@ -775,7 +775,7 @@ Extrae los valores de la pantalla EcaPlus en la imagen y responde solo con el JS
     if (data.error) { showError("API: " + (data.error.message || JSON.stringify(data.error))); btn.classList.remove("loading"); btn.disabled = false; return; }
     const raw = (data.content || []).map(b => b.text || "").join("").trim();
     if (!raw) { showError("Sin contenido. Stop reason: " + (data.stop_reason || "?")); btn.classList.remove("loading"); btn.disabled = false; return; }
-    const jsonMatch = raw.match(/{[sS]*}/);
+    const clean2 = raw.replace(/```json/g,'').replace(/```/g,'').trim(); const jsonMatch = clean2.match(/\{[\s\S]*\}/);
     if (!jsonMatch) { showError("JSON no encontrado. Resp: " + raw.substring(0,200)); btn.classList.remove("loading"); btn.disabled = false; return; }
     const extracted = JSON.parse(jsonMatch[0]);
     showResults(extracted);
