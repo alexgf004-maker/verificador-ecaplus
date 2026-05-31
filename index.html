@@ -770,14 +770,17 @@ Extrae los valores de la pantalla EcaPlus en la imagen y responde solo con el JS
       })
     });
 
-    const data = await response.json();
-    const raw = data.content?.map(b => b.text || '').join('') || '';
-    const clean = raw.replace(/```json|```/g, '').trim();
-    const extracted = JSON.parse(clean);
 
+    const data = await response.json();
+    if (data.error) { showError("API: " + (data.error.message || JSON.stringify(data.error))); btn.classList.remove("loading"); btn.disabled = false; return; }
+    const raw = (data.content || []).map(b => b.text || "").join("").trim();
+    if (!raw) { showError("Sin contenido. Stop reason: " + (data.stop_reason || "?")); btn.classList.remove("loading"); btn.disabled = false; return; }
+    const jsonMatch = raw.match(/{[sS]*}/);
+    if (!jsonMatch) { showError("JSON no encontrado. Resp: " + raw.substring(0,200)); btn.classList.remove("loading"); btn.disabled = false; return; }
+    const extracted = JSON.parse(jsonMatch[0]);
     showResults(extracted);
   } catch(err) {
-    showError('Error al analizar la imagen: ' + err.message);
+    showError("Error: " + err.message);
   }
 
   btn.classList.remove('loading');
